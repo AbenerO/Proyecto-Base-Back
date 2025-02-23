@@ -160,7 +160,11 @@ class GenerateApi extends Command
         $controllerName = "{$this->nombreModelo}ApiController";
         $controllerNamespace = 'App\\Http\\Controllers\\Api\\';
 
-        $route = "Route::apiResource('{$resourceName}', $controllerNamespace{$controllerName}::class);";
+        $rutaParaObtenerColumnas = "Route::get('{$resourceName}/getColumnas', [$controllerNamespace{$controllerName}::class, 'getColumnas']);";
+
+        File::append($routePath, PHP_EOL . $rutaParaObtenerColumnas . PHP_EOL);
+
+        $rutaDeRecursos = "Route::apiResource('{$resourceName}', $controllerNamespace{$controllerName}::class);";
 
         if (!File::exists($routePath)) {
             $this->error("El archivo de rutas 'routes/api.php' no existe.");
@@ -170,15 +174,15 @@ class GenerateApi extends Command
         $content = File::get($routePath);
 
         // Verificar si la ruta ya existe
-        if (strpos($content, $route) !== false) {
+        if (strpos($content, $rutaDeRecursos) !== false) {
             $this->warn("La ruta para '{$resourceName}' ya existe en el archivo de rutas.");
             return;
         }
 
         // Añadir la nueva ruta al final del archivo
-        File::append($routePath, PHP_EOL . $route . PHP_EOL);
+        File::append($routePath, PHP_EOL . $rutaDeRecursos . PHP_EOL);
 
-        $this->info("Ruta añadida correctamente: {$route}");
+        $this->info("Ruta añadida correctamente: {$rutaDeRecursos}");
     }
 
 

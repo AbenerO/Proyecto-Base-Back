@@ -10,14 +10,13 @@ use {{ requestNamespace }}\{{ updateRequest }};
 use {{ modelNamespace }}\{{ model }};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Class {{ controlador }}
  */
 class {{ controlador }} extends AppbaseController implements HasMiddleware
 {
-
 
     /**
      * @return array
@@ -100,4 +99,17 @@ class {{ controlador }} extends AppbaseController implements HasMiddleware
         ${{ variable }}->delete();
         return $this->sendResponse(null, '{{ model }} eliminado con éxito.');
     }
+
+    /**
+    * Get columns of the table
+    * GET /{{ variable_plural }}/columns
+    */
+    public function getColumnas(): JsonResponse
+    {
+
+        $columns = Schema::getColumnListing((new {{ model }})->getTable());
+
+        return $this->sendResponse($columns, 'Columnas de la tabla {{ tableName }} recuperadas con éxito.');
+    }
+
 }
