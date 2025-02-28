@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use http\Cookie;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -114,6 +115,7 @@ class GenerateApi extends Command
             '{{ useSoftDeletes }}' => $useSoftDeletesCode,
             '{{ softDeletesTrait }}' => $softDeletesTrait,
             '{{ casts }}' => $casts,
+            '{{ otro }}' => $fillable,
         ];
 
 

@@ -11,6 +11,7 @@ use {{ modelNamespace }}\{{ model }};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Spatie\QueryBuilder\QueryBuilder;
 
 /**
  * Class {{ controlador }}
@@ -38,17 +39,12 @@ class {{ controlador }} extends AppbaseController implements HasMiddleware
      */
     public function index(Request $request): JsonResponse
     {
-        $query = {{ model }}::query();
-
-        if ($request->get('skip')) {
-            $query->skip($request->get('skip'));
-        }
-
-        if ($request->get('limit')) {
-            $query->limit($request->get('limit'));
-        }
-
-        ${{ variable_plural }} = $query->get();
+        ${{ variable_plural }} = QueryBuilder::for({{ model }}::class)
+            ->with([])
+            ->allowedFilters({{ otro }})
+            ->allowedSorts({{ otro }})
+            ->defaultSort('-created_at') // Ordenar por defecto por fecha descendente
+            ->paginate($request->get('per_page', 10));
 
         return $this->sendResponse(${{ variable_plural }}->toArray(), '{{ variable_plural }} recuperados con éxito.');
     }
