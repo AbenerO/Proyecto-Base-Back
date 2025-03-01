@@ -88,11 +88,11 @@ class MenuOpcion extends Model
      */
     public static $rules =
     [
-    'titulo' => 'string|max:255',
-    'titulo_seccion' => 'string|max:255',
-    'icono' => 'string|max:255',
-    'ruta' => 'string|max:255',
-    'orden' => 'nullable|integer',
+    'titulo' => 'string|max:255|nullable',
+    'titulo_seccion' => 'string|max:255|nullable',
+    'icono' => 'string|max:255|nullable',
+    'ruta' => 'string|max:255|nullable',
+    'orden' => 'nullable|integer|nullable',
     'action' => 'required|string|max:255',
     'subject' => 'required|string|max:255',
     'option_id' => 'nullable|integer',

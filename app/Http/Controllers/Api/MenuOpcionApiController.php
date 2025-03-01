@@ -62,6 +62,8 @@ class MenuOpcionApiController extends AppbaseController
             ])
             ->defaultSort('-id') // Ordenar por defecto por fecha descendente
                 ->Padres()
+            ->with('children')
+            ->orderBy('orden', 'asc')
             ->paginate($request->get('per_page', 10));
 
         return $this->sendResponse($menuOpcions->toArray(), 'menu-opcions recuperados con éxito.');
@@ -78,9 +80,12 @@ class MenuOpcionApiController extends AppbaseController
 
         MenuOpcion::create($input);
 
-        $opciones = MenuOpcion::Padres()->get();
+        $opcionesMenu = MenuOpcion::Padres()
+            ->with('children')
+            ->orderBy('orden', 'asc')
+            ->get();
 
-        return $this->sendResponse($opciones->toArray(), 'MenuOpcion creado con éxito.');
+        return $this->sendResponse($opcionesMenu->toArray(), 'MenuOpcion creado con éxito.');
     }
 
 
@@ -88,9 +93,9 @@ class MenuOpcionApiController extends AppbaseController
      * Display the specified MenuOpcion.
      * GET|HEAD /menu-opcions/{id}
      */
-    public function show(MenuOpcion $menuopcion)
+    public function show(MenuOpcion $menu_opcion)
     {
-        return $this->sendResponse($menuopcion->toArray(), 'MenuOpcion recuperado con éxito.');
+        return $this->sendResponse($menu_opcion->toArray(), 'MenuOpcion recuperado con éxito.');
     }
 
 
@@ -102,16 +107,22 @@ class MenuOpcionApiController extends AppbaseController
     {
         $menuopcion = MenuOpcion::findOrFail($id);
         $menuopcion->update($request->validated());
-        return $this->sendResponse($menuopcion, 'MenuOpcion actualizado con éxito.');
+
+        $opcionesMenu = MenuOpcion::Padres()
+            ->with('children')
+            ->orderBy('orden', 'asc')
+            ->get();
+
+        return $this->sendResponse($opcionesMenu->toArray(), 'MenuOpcion actualizado con éxito.');
     }
 
     /**
      * Remove the specified MenuOpcion from storage.
      * DELETE /menu-opcions/{id}
      */
-    public function destroy(MenuOpcion $menuopcion): JsonResponse
+    public function destroy(MenuOpcion $menu_opcion): JsonResponse
     {
-        $menuopcion->delete();
+        $menu_opcion->delete();
         return $this->sendResponse(null, 'MenuOpcion eliminado con éxito.');
     }
 
@@ -141,13 +152,20 @@ class MenuOpcionApiController extends AppbaseController
     public function actualizarOrden(Request $request)
     {
 
-        return $request->opciones;
+        $opciones = $request->opciones;
 
-        foreach ($request->opciones as $index => $menuOpcion) {
-            MenuOpcion::where('id', $menuOpcion->id)->update(['orden' => $index]);
+        foreach ($opciones as $index => $menuOpcion) {
+
+            MenuOpcion::where('id', $menuOpcion['id'])->update(['orden' => $index]);
+
         }
 
-        return $this->sendResponse(null, 'Orden actualizado con éxito.');
+        $opcionesMenu = MenuOpcion::Padres()
+            ->with('children')
+            ->orderBy('orden', 'asc')
+            ->get();
+
+        return $this->sendResponse($opcionesMenu, 'Orden actualizado con éxito.');
 
 
     }
