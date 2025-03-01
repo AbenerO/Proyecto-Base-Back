@@ -13,14 +13,13 @@ return new class extends Migration
     {
         Schema::create('menu_opciones', function (Blueprint $table) {
             $table->id();
-            $table->string('titulo');
-            $table->string('titulo_seccion');
-            $table->string('icono');
-            $table->string('ruta');
+            $table->string('titulo')->nullable();
+            $table->string('titulo_seccion')->nullable();
+            $table->string('icono')->nullable();
+            $table->string('ruta')->nullable();
             $table->integer('orden')->nullable()->default(0);
             $table->string('action');
             $table->string('subject');
-
 
             $table->bigInteger('option_id')
                 ->unsigned()

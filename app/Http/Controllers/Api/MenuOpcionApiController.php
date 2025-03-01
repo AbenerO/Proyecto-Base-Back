@@ -19,18 +19,18 @@ use Spatie\QueryBuilder\QueryBuilder;
 class MenuOpcionApiController extends AppbaseController
 {
 
-      /**
-  //     * @return array
-  //     */
-  //    public static function middleware(): array
-  //    {
-  //        return [
-  //            new Middleware('abilities:ver menu-opcions', only: ['index', 'show']),
-  //            new Middleware('abilities:crear menu-opcions', only: ['store']),
-  //            new Middleware('abilities:editar menu-opcions', only: ['update']),
-  //            new Middleware('abilities:eliminar menu-opcions', only: ['destroy']),
-  //        ];
-  //    }
+    /**
+     * //     * @return array
+     * //     */
+    //    public static function middleware(): array
+    //    {
+    //        return [
+    //            new Middleware('abilities:ver menu-opcions', only: ['index', 'show']),
+    //            new Middleware('abilities:crear menu-opcions', only: ['store']),
+    //            new Middleware('abilities:editar menu-opcions', only: ['update']),
+    //            new Middleware('abilities:eliminar menu-opcions', only: ['destroy']),
+    //        ];
+    //    }
 
     /**
      * Display a listing of the Menu_opciones.
@@ -41,26 +41,27 @@ class MenuOpcionApiController extends AppbaseController
         $menuOpcions = QueryBuilder::for(MenuOpcion::class)
             ->with([])
             ->allowedFilters([
-    'titulo',
-    'titulo_seccion',
-    'icono',
-    'ruta',
-    'orden',
-    'action',
-    'subject',
-    'option_id'
-])
+                'titulo',
+                'titulo_seccion',
+                'icono',
+                'ruta',
+                'orden',
+                'action',
+                'subject',
+                'option_id'
+            ])
             ->allowedSorts([
-    'titulo',
-    'titulo_seccion',
-    'icono',
-    'ruta',
-    'orden',
-    'action',
-    'subject',
-    'option_id'
-])
+                'titulo',
+                'titulo_seccion',
+                'icono',
+                'ruta',
+                'orden',
+                'action',
+                'subject',
+                'option_id'
+            ])
             ->defaultSort('-id') // Ordenar por defecto por fecha descendente
+                ->Padres()
             ->paginate($request->get('per_page', 10));
 
         return $this->sendResponse($menuOpcions->toArray(), 'menu-opcions recuperados con éxito.');
@@ -75,9 +76,11 @@ class MenuOpcionApiController extends AppbaseController
     {
         $input = $request->all();
 
-        $menuOpcions = MenuOpcion::create($input);
+        MenuOpcion::create($input);
 
-        return $this->sendResponse($menuOpcions->toArray(), 'MenuOpcion creado con éxito.');
+        $opciones = MenuOpcion::Padres()->get();
+
+        return $this->sendResponse($opciones->toArray(), 'MenuOpcion creado con éxito.');
     }
 
 
@@ -91,11 +94,10 @@ class MenuOpcionApiController extends AppbaseController
     }
 
 
-
     /**
-    * Update the specified MenuOpcion in storage.
-    * PUT/PATCH /menu-opcions/{id}
-    */
+     * Update the specified MenuOpcion in storage.
+     * PUT/PATCH /menu-opcions/{id}
+     */
     public function update(UpdateMenuOpcionApiRequest $request, $id): JsonResponse
     {
         $menuopcion = MenuOpcion::findOrFail($id);
@@ -104,9 +106,9 @@ class MenuOpcionApiController extends AppbaseController
     }
 
     /**
-    * Remove the specified MenuOpcion from storage.
-    * DELETE /menu-opcions/{id}
-    */
+     * Remove the specified MenuOpcion from storage.
+     * DELETE /menu-opcions/{id}
+     */
     public function destroy(MenuOpcion $menuopcion): JsonResponse
     {
         $menuopcion->delete();
@@ -114,9 +116,9 @@ class MenuOpcionApiController extends AppbaseController
     }
 
     /**
-    * Get columns of the table
-    * GET /menu-opcions/columns
-    */
+     * Get columns of the table
+     * GET /menu-opcions/columns
+     */
     public function getColumnas(): JsonResponse
     {
 
@@ -130,10 +132,24 @@ class MenuOpcionApiController extends AppbaseController
             'columns' => array_values($columnasSinTimesTamps),
             'nombreDelModelo' => 'MenuOpcion',
             'nombreDeTabla' => $nombreDeTabla,
-            'ruta' => 'api/'.$nombreDeTabla,
+            'ruta' => 'api/' . $nombreDeTabla,
         ];
 
         return $this->sendResponse($data, 'Columnas de la tabla menu_opciones recuperadas con éxito.');
+    }
+
+    public function actualizarOrden(Request $request)
+    {
+
+        return $request->opciones;
+
+        foreach ($request->opciones as $index => $menuOpcion) {
+            MenuOpcion::where('id', $menuOpcion->id)->update(['orden' => $index]);
+        }
+
+        return $this->sendResponse(null, 'Orden actualizado con éxito.');
+
+
     }
 
 }

@@ -43,6 +43,7 @@ class Permission extends Model
     'guard_name'
 ];
 
+    protected $appends = ['name_y_subjet'];
 
     /**
      * The attributes that should be casted to native types.
@@ -90,5 +91,11 @@ class Permission extends Model
      * @var array
      */
 
+    public function getNameYSubjetAttribute()
+    {
+
+        return $this->name . ' - ' . $this->subject;
+
+    }
 
 }

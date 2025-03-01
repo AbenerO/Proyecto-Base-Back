@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $titulo
@@ -40,7 +40,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class MenuOpcion extends Model
 {
 
-    
+
     use HasFactory;
 
     protected $table = 'menu_opciones';
@@ -88,10 +88,10 @@ class MenuOpcion extends Model
      */
     public static $rules =
     [
-    'titulo' => 'required|string|max:255',
-    'titulo_seccion' => 'required|string|max:255',
-    'icono' => 'required|string|max:255',
-    'ruta' => 'required|string|max:255',
+    'titulo' => 'string|max:255',
+    'titulo_seccion' => 'string|max:255',
+    'icono' => 'string|max:255',
+    'ruta' => 'string|max:255',
     'orden' => 'nullable|integer',
     'action' => 'required|string|max:255',
     'subject' => 'required|string|max:255',
@@ -114,9 +114,16 @@ class MenuOpcion extends Model
      *
      * @var array
      */
-    public function menuOpciones()
+    public function children()
     {
-    return $this->hasMany(MenuOpcione::class,'option_id','id');
+     return $this->hasMany(MenuOpcion::class,'option_id','id');
+    }
+
+    public function scopePadres()
+    {
+
+        return $this->whereNull('option_id');
+
     }
 
 }
