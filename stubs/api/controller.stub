@@ -16,22 +16,21 @@ use Spatie\QueryBuilder\QueryBuilder;
 /**
  * Class {{ controlador }}
  */
-class {{ controlador }} extends AppbaseController implements HasMiddleware
+class {{ controlador }} extends AppbaseController
 {
 
-    /**
-     * @return array
-     */
-    public static function middleware(): array
-    {
-        return [
-        new Middleware('abilities:ver {{ variable_plural }}', only: ['index', 'show']),
-        new Middleware('abilities:crear {{ variable_plural }}', only: ['store']),
-        new Middleware('abilities:editar {{ variable_plural }}', only: ['update']),
-        new Middleware('abilities:eliminar {{ variable_plural }}', only: ['destroy']),
-        ];
-    }
-
+      /**
+  //     * @return array
+  //     */
+  //    public static function middleware(): array
+  //    {
+  //        return [
+  //            new Middleware('abilities:ver {{ variable_plural }}', only: ['index', 'show']),
+  //            new Middleware('abilities:crear {{ variable_plural }}', only: ['store']),
+  //            new Middleware('abilities:editar {{ variable_plural }}', only: ['update']),
+  //            new Middleware('abilities:eliminar {{ variable_plural }}', only: ['destroy']),
+  //        ];
+  //    }
 
     /**
      * Display a listing of the {{ tableNameM }}.
@@ -105,7 +104,18 @@ class {{ controlador }} extends AppbaseController implements HasMiddleware
 
         $columns = Schema::getColumnListing((new {{ model }})->getTable());
 
-        return $this->sendResponse($columns, 'Columnas de la tabla {{ tableName }} recuperadas con éxito.');
+        $columnasSinTimesTamps = array_diff($columns, ['id', 'created_at', 'updated_at', 'deleted_at']);
+
+        $nombreDeTabla = (new {{ model }})->getTable();
+
+        $data = [
+            'columns' => array_values($columnasSinTimesTamps),
+            'nombreDelModelo' => '{{ model }}',
+            'nombreDeTabla' => $nombreDeTabla,
+            'ruta' => 'api/'.$nombreDeTabla,
+        ];
+
+        return $this->sendResponse($data, 'Columnas de la tabla {{ tableName }} recuperadas con éxito.');
     }
 
 }

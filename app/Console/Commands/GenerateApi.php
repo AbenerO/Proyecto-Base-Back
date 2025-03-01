@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use http\Cookie;
 use Illuminate\Console\Command;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
@@ -162,7 +163,7 @@ class GenerateApi extends Command
         $controllerName = "{$this->nombreModelo}ApiController";
         $controllerNamespace = 'App\\Http\\Controllers\\Api\\';
 
-        $rutaParaObtenerColumnas = "Route::get('{$resourceName}/getColumnas', [$controllerNamespace{$controllerName}::class, 'getColumnas']);";
+        $rutaParaObtenerColumnas = "Route::get('{$resourceName}/getColumnas', [$controllerNamespace{$controllerName}::class, 'getColumnas'])->name('{$resourceName}.getColumnas');";
 
         File::append($routePath, PHP_EOL . $rutaParaObtenerColumnas . PHP_EOL);
 
@@ -185,6 +186,8 @@ class GenerateApi extends Command
         File::append($routePath, PHP_EOL . $rutaDeRecursos . PHP_EOL);
 
         $this->info("Ruta añadida correctamente: {$rutaDeRecursos}");
+        $this->info("Ruta para crear desde el FrontEnd: " . url("api/{$resourceName}").'/getColumnas');
+
     }
 
 
@@ -442,6 +445,7 @@ class GenerateApi extends Command
         return in_array('morph_id', $columns) && in_array('morph_type', $columns);
     }
 
+//
 
 
 
