@@ -13,3 +13,7 @@ require __DIR__.'/auth.php';
 Route::get('menu-opcions/getColumnas', [App\Http\Controllers\Api\MenuOpcionApiController::class, 'getColumnas'])->name('menu-opcions.getColumnas');
 
 Route::apiResource('menu-opcions', App\Http\Controllers\Api\MenuOpcionApiController::class);
+
+Route::get('permissions/getColumnas', [App\Http\Controllers\Api\PermissionApiController::class, 'getColumnas'])->name('permissions.getColumnas');
+
+Route::apiResource('permissions', App\Http\Controllers\Api\PermissionApiController::class);
