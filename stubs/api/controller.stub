@@ -42,7 +42,7 @@ class {{ controlador }} extends AppbaseController
             ->with([])
             ->allowedFilters({{ otro }})
             ->allowedSorts({{ otro }})
-            ->defaultSort('-created_at') // Ordenar por defecto por fecha descendente
+            ->defaultSort('-id') // Ordenar por defecto por fecha descendente
             ->paginate($request->get('per_page', 10));
 
         return $this->sendResponse(${{ variable_plural }}->toArray(), '{{ variable_plural }} recuperados con éxito.');
