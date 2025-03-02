@@ -64,8 +64,6 @@ class GenerateApi extends Command
         // Añadir la ruta
         $this->addRoute();
 
-        $this->info("Generación de API completada.");
-
     }
 
 
@@ -135,15 +133,52 @@ class GenerateApi extends Command
             '--no-interaction' => true, // Evita cualquier interacción del usuario
         ]);
 
+//        $this->info("\n✅ Archivos generados correctamente:\n");
+//        $this->line("📌 <fg=green>Modelo:</>          <fg=yellow>{$modelo}</>");
+//        $this->line("📌 <fg=green>Controlador:</>     <fg=yellow>{$controlador}</>");
+//        $this->line("📌 <fg=green>Request (Crear):</> <fg=yellow>{$createRequest}</>");
+//        $this->line("📌 <fg=green>Request (Actualizar):</> <fg=yellow>{$updateRequest}</>");
+//        $this->line("📌 <fg=green>Seeder:</>          <fg=yellow>{$this->nombreTabla}TableSeeder</>");
+//        $this->line("📌 <fg=green>Ruta:</>            <fg=cyan>Añadida al archivo de rutas</>");
+//        $this->newLine();
+//        $this->info("🌐 Ruta para obtener columnas desde el FrontEnd:");
+//        $this->line("🔗 <fg=blue>" . url("api/{$this->nombreTabla}/getColumnas") . "</>");
+//        $this->newLine();
+//        $this->info("🚀 ¡Generación de archivos completada con éxito!");
 
+        // Mostrar los archivos generados con formato y colores
+        $this->info("\n✅ Archivos generados correctamente:\n");
 
-        //mostrar los archivos generados
-        $this->info("Modelo creado: {$modelo}");
-        $this->info("Controlador creado: {$controlador}");
-        $this->info("Request de creación creado: {$createRequest}");
-        $this->info("Request de actualización creado: {$updateRequest}");
-        $this->info("Seeder creado: {$this->nombreTabla}TableSeeder");
-        $this->info("Ruta añadida al archivo de rutas.");
+        $padding = 25; // Espacios para alinear los textos
+
+        $this->line("📌 <fg=green>" . str_pad('Modelo:', $padding) . "</><fg=yellow>{$modelo}</>");
+        $this->line("📌 <fg=green>" . str_pad('Controlador:', $padding) . "</><fg=yellow>{$controlador}</>");
+        $this->line("📌 <fg=green>" . str_pad('Request (Crear):', $padding) . "</><fg=yellow>{$createRequest}</>");
+        $this->line("📌 <fg=green>" . str_pad('Request (Actualizar):', $padding) . "</><fg=yellow>{$updateRequest}</>");
+        $this->line("📌 <fg=green>" . str_pad('Seeder:', $padding) . "</><fg=yellow>{$this->nombreTabla}TableSeeder</>");
+        $this->line("📌 <fg=green>" . str_pad('Ruta:', $padding) . "</><fg=cyan>Añadida al archivo de rutas</>");
+
+        $this->newLine();
+        $url = url("api/{$this->nombreTabla}/getColumnas");
+        $this->info("🌐 Ruta para obtener columnas desde el FrontEnd:");
+        $this->line("🔗 <fg=blue>{$url}</>");
+
+        $this->newLine();
+
+// Copiar la URL automáticamente en el portapapeles (según el SO)
+        if (PHP_OS_FAMILY === 'Darwin') {
+            exec("echo '{$url}' | pbcopy"); // MacOS
+            $this->info("📋 URL copiada al portapapeles (MacOS)");
+        } elseif (PHP_OS_FAMILY === 'Windows') {
+            exec("echo {$url} | clip"); // Windows
+            $this->info("📋 URL copiada al portapapeles (Windows)");
+        } else {
+            $this->info("⚠️ Copia manual: Usa Ctrl+C para copiar la URL.");
+        }
+
+        $this->newLine();
+        $this->info("🚀 ¡Generación de archivos completada con éxito!");
+
 
     }
 
@@ -184,9 +219,6 @@ class GenerateApi extends Command
 
         // Añadir la nueva ruta al final del archivo
         File::append($routePath, PHP_EOL . $rutaDeRecursos . PHP_EOL);
-
-        $this->info("Ruta añadida correctamente: {$rutaDeRecursos}");
-        $this->info("Ruta para crear desde el FrontEnd: " . url("api/{$resourceName}").'/getColumnas');
 
     }
 
