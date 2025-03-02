@@ -136,22 +136,19 @@ class GenerateApi extends Command
         $this->info("📁 Estructura de Archivos:");
 
         $this->line("  ├── <fg=blue>📂 app</>");
-        $this->line("  │   ├── <fg=green>📂 Models</>");
-        $this->line("  │   │   └── <fg=yellow>📌 {$modelo}.php</>");
-        $this->line("  │   ├── <fg=green>📂 Http</>");
-        $this->line("  │   │   ├── <fg=cyan>📂 Controllers</>");
-        $this->line("  │   │   │   └── <fg=magenta>📌 {$controlador}.php</>");
-        $this->line("  │   │   └── <fg=cyan>📂 Requests</>");
-        $this->line("  │   │       ├── <fg=yellow>📌 {$createRequest}.php</>");
-        $this->line("  │   │       └── <fg=yellow>📌 {$updateRequest}.php</>");
+        $this->line("  │   ├── <fg=blue>📂 Models</>");
+        $this->line("  │   │   └── <fg=green>📄 {$modelo}.php</>");
+        $this->line("  │   ├── <fg=blue>📂 Http</>");
+        $this->line("  │   │   ├── <fg=blue>📂 Controllers</>");
+        $this->line("  │   │   │   └── <fg=green>📄 {$controlador}.php</>");
+        $this->line("  │   │   └── <fg=blue>📂 Requests</>");
+        $this->line("  │   │       ├── <fg=green>📄 {$createRequest}.php</>");
+        $this->line("  │   │       └── <fg=green>📄 {$updateRequest}.php</>");
         $this->line("  ├── <fg=blue>📂 database</>");
-        $this->line("  │   └── <fg=green>📂 seeders</>");
-        $this->line("  │       └── <fg=magenta>📌 {$this->nombreTabla}TableSeeder.php</>");
+        $this->line("  │   └── <fg=blue>📂 seeders</>");
+        $this->line("  │       └── <fg=green>📄 {$this->nombreTabla}TableSeeder.php</>");
         $this->line("  └── <fg=blue>📂 routes</>");
-        $this->line("      └── <fg=cyan>📌 api.php</>");
-
-        $this->newLine();
-
+        $this->line("      └── <fg=green>📄 api.php</>");
 
         $this->newLine();
         $url = url("api/{$this->nombreTabla}/getColumnas");
