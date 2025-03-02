@@ -133,30 +133,25 @@ class GenerateApi extends Command
             '--no-interaction' => true, // Evita cualquier interacción del usuario
         ]);
 
-//        $this->info("\n✅ Archivos generados correctamente:\n");
-//        $this->line("📌 <fg=green>Modelo:</>          <fg=yellow>{$modelo}</>");
-//        $this->line("📌 <fg=green>Controlador:</>     <fg=yellow>{$controlador}</>");
-//        $this->line("📌 <fg=green>Request (Crear):</> <fg=yellow>{$createRequest}</>");
-//        $this->line("📌 <fg=green>Request (Actualizar):</> <fg=yellow>{$updateRequest}</>");
-//        $this->line("📌 <fg=green>Seeder:</>          <fg=yellow>{$this->nombreTabla}TableSeeder</>");
-//        $this->line("📌 <fg=green>Ruta:</>            <fg=cyan>Añadida al archivo de rutas</>");
-//        $this->newLine();
-//        $this->info("🌐 Ruta para obtener columnas desde el FrontEnd:");
-//        $this->line("🔗 <fg=blue>" . url("api/{$this->nombreTabla}/getColumnas") . "</>");
-//        $this->newLine();
-//        $this->info("🚀 ¡Generación de archivos completada con éxito!");
+        $this->info("📁 Estructura de Archivos:");
 
-        // Mostrar los archivos generados con formato y colores
-        $this->info("\n✅ Archivos generados correctamente:\n");
+        $this->line("  ├── <fg=blue>📂 app</>");
+        $this->line("  │   ├── <fg=green>📂 Models</>");
+        $this->line("  │   │   └── <fg=yellow>📌 {$modelo}.php</>");
+        $this->line("  │   ├── <fg=green>📂 Http</>");
+        $this->line("  │   │   ├── <fg=cyan>📂 Controllers</>");
+        $this->line("  │   │   │   └── <fg=magenta>📌 {$controlador}.php</>");
+        $this->line("  │   │   └── <fg=cyan>📂 Requests</>");
+        $this->line("  │   │       ├── <fg=yellow>📌 {$createRequest}.php</>");
+        $this->line("  │   │       └── <fg=yellow>📌 {$updateRequest}.php</>");
+        $this->line("  ├── <fg=blue>📂 database</>");
+        $this->line("  │   └── <fg=green>📂 seeders</>");
+        $this->line("  │       └── <fg=magenta>📌 {$this->nombreTabla}TableSeeder.php</>");
+        $this->line("  └── <fg=blue>📂 routes</>");
+        $this->line("      └── <fg=cyan>📌 api.php</>");
 
-        $padding = 25; // Espacios para alinear los textos
+        $this->newLine();
 
-        $this->line("📌 <fg=green>" . str_pad('Modelo:', $padding) . "</><fg=yellow>{$modelo}</>");
-        $this->line("📌 <fg=green>" . str_pad('Controlador:', $padding) . "</><fg=yellow>{$controlador}</>");
-        $this->line("📌 <fg=green>" . str_pad('Request (Crear):', $padding) . "</><fg=yellow>{$createRequest}</>");
-        $this->line("📌 <fg=green>" . str_pad('Request (Actualizar):', $padding) . "</><fg=yellow>{$updateRequest}</>");
-        $this->line("📌 <fg=green>" . str_pad('Seeder:', $padding) . "</><fg=yellow>{$this->nombreTabla}TableSeeder</>");
-        $this->line("📌 <fg=green>" . str_pad('Ruta:', $padding) . "</><fg=cyan>Añadida al archivo de rutas</>");
 
         $this->newLine();
         $url = url("api/{$this->nombreTabla}/getColumnas");
@@ -181,9 +176,6 @@ class GenerateApi extends Command
 
 
     }
-
-
-
 
     /**
      * Añadir ruta al archivo de rutas
