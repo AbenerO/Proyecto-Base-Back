@@ -22,15 +22,15 @@ class MenuOpcionApiController extends AppbaseController
     /**
      * //     * @return array
      * //     */
-    //    public static function middleware(): array
-    //    {
-    //        return [
-    //            new Middleware('abilities:ver MenuOpcion', only: ['index', 'show']),
-    //            new Middleware('abilities:crear MenuOpcion', only: ['store']),
-    //            new Middleware('abilities:editar MenuOpcion', only: ['update']),
-    //            new Middleware('abilities:eliminar MenuOpcion', only: ['destroy']),
-    //        ];
-    //    }
+        public static function middleware(): array
+        {
+            return [
+                new Middleware('abilities:ver MenuOpcion', only: ['index', 'show']),
+                new Middleware('abilities:crear MenuOpcion', only: ['store']),
+                new Middleware('abilities:editar MenuOpcion', only: ['update']),
+                new Middleware('abilities:eliminar MenuOpcion', only: ['destroy']),
+            ];
+        }
 
     /**
      * Display a listing of the Menu_opciones.
