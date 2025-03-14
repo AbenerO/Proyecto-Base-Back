@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\AppBaseController;
+use App\Models\Role;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use App\Http\Requests\Api\CreatePermissionApiRequest;
@@ -10,6 +11,7 @@ use App\Http\Requests\Api\UpdatePermissionApiRequest;
 use App\Models\Permission;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -61,13 +63,26 @@ class PermissionApiController extends AppbaseController
      * Store a newly created Permission in storage.
      * POST /permissions
      */
-    public function store(CreatePermissionApiRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
-        $input = $request->all();
+        try {
+            DB::beginTransaction();
+            $attributes = $request['data'];
+            $permission = Permission::create($attributes);
+            $this->createAuditRoles($permission, $attributes ['roles']);
+            DB::commit();
 
-        $permissions = Permission::create($input);
+            return response()->json([
+                'success' => true,
+                'data' => $permission,
+                'message' => 'Permiso creado correctamente'
+            ], 200);
 
-        return $this->sendResponse($permissions->toArray(), 'Permission creado con éxito.');
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
 
@@ -86,11 +101,26 @@ class PermissionApiController extends AppbaseController
     * Update the specified Permission in storage.
     * PUT/PATCH /permissions/{id}
     */
-    public function update(UpdatePermissionApiRequest $request, $id): JsonResponse
+    public function update(Request $request, Permission $permission ): JsonResponse
     {
-        $permission = Permission::findOrFail($id);
-        $permission->update($request->validated());
-        return $this->sendResponse($permission, 'Permission actualizado con éxito.');
+        try {
+            DB::beginTransaction();
+            $attributes = $request['data'];
+            $permission->update($attributes);
+            $this->updateAuditRoles($permission, $attributes ['roles']);
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'data' => $permission,
+                'message' => 'Permiso actualizado correctamente'
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -124,6 +154,58 @@ class PermissionApiController extends AppbaseController
         ];
 
         return $this->sendResponse($data, 'Columnas de la tabla permissions recuperadas con éxito.');
+    }
+
+    private function createAuditRoles($permiso, $roles)
+    {
+        if ($roles) {
+            foreach ($roles as $role_id) {
+                $role = Role::find($role_id['id']);
+                if ($role) {
+                    $role->givePermissionTo($permiso);
+                }
+            }
+        }
+    }
+
+
+    private function updateAuditRoles($permiso, $roles)
+    {
+        try {
+            if (is_array($roles)) {
+                // Obtener los IDs de los roles seleccionados
+                $rolesIdsSeleccionados = array_column($roles, 'id');
+
+                // Obtener todos los roles que tienen actualmente el permiso
+                $rolesConPermiso = Role::whereHas('permissions', function ($query) use ($permiso) {
+                    $query->where('name', $permiso->name);
+                })->pluck('id')->toArray();
+                // Roles para los que se debe asignar el permiso
+                $rolesParaAsignar = array_diff($rolesIdsSeleccionados, $rolesConPermiso);
+
+                // Roles para los que se debe desasignar el permiso
+                $rolesParaRevocar = array_diff($rolesConPermiso, $rolesIdsSeleccionados);
+                // Asignar el permiso a los nuevos roles seleccionados
+                foreach ($rolesParaAsignar as $roleId) {
+                    $role = Role::find($roleId);
+                    if ($role) {
+                        $role->givePermissionTo($permiso);
+                    }
+                }
+
+                // Revocar el permiso de los roles que ya no están seleccionados
+                foreach ($rolesParaRevocar as $roleId) {
+                    $role = Role::find($roleId);
+                    if ($role) {
+                        $role->revokePermissionTo($permiso);
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
 }
