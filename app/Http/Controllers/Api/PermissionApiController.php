@@ -41,13 +41,16 @@ class PermissionApiController extends AppbaseController
     public function index(Request $request): JsonResponse
     {
         $permissions = QueryBuilder::for(Permission::class)
-            ->with([])
-            ->allowedFilters(['name', 'subject', 'guard_name'])
-            ->allowedSorts(['name', 'subject', 'guard_name'])
-            ->defaultSort('id') // Ordenar por defecto por fecha descendente
+            ->allowedFields(['name', 'guard_name', 'created_at', 'updated_at'])
+            ->allowedIncludes(['roles'])
+            ->allowedFilters(['name', 'guard_name'])
+            ->allowedSorts(['name', 'guard_name', 'created_at', 'updated_at'])
             ->paginate($request->get('per_page', 10));
 
-        return $this->sendResponse($permissions->toArray(), 'permissions recuperados con éxito.');
+        return response()->json([
+            'data' => $permissions,
+            'message' => 'Permisos recuperados con éxito.'
+        ]);
     }
 
 
@@ -55,25 +58,13 @@ class PermissionApiController extends AppbaseController
      * Store a newly created Permission in storage.
      * POST /permissions
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {
         try {
             DB::beginTransaction();
-
-            // Obtener los datos, asegurando que 'data' siempre sea un array
-            $attributes = $request->input('data', []);
-
-            // Si 'roles' no está presente, se asigna un array vacío
-            $roles = $attributes['roles'] ?? [];
-
-            // Crear el permiso sin depender de 'roles'
+            $attributes = $request['data'];
             $permission = Permission::create($attributes);
-
-            // Solo asignar roles si hay roles en la solicitud
-            if (!empty($roles)) {
-                $this->createAuditRoles($permission, $roles);
-            }
-
+            $this->createAuditRoles($permission, $attributes ['roles']);
             DB::commit();
 
             return response()->json([
@@ -184,6 +175,7 @@ class PermissionApiController extends AppbaseController
         }
     }
 
+
     private function updateAuditRoles($permiso, $roles)
     {
         try {
@@ -221,6 +213,14 @@ class PermissionApiController extends AppbaseController
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+
+    public function roles(Permission $permission)
+    {
+        return response()->json([
+            'data' => $permission->roles
+        ]);
     }
 
 }

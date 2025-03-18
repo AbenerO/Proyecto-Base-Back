@@ -4,8 +4,8 @@ namespace App\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  *
@@ -27,9 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Role extends Model
 {
-
-
-    use HasFactory;
+    use HasFactory, HasRoles;
 
     protected $table = 'roles';
 
@@ -86,10 +84,8 @@ class Role extends Model
         return $this->belongsToMany(User::class, 'role_user');
     }
 
-    public function permissions()
+    public function permissions(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Permission::class, 'role_has_permissions');
     }
-
-
 }

@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Permission\Traits\HasPermissions;
 
 /**
  *
@@ -38,10 +39,10 @@ class Permission extends Model
 
     protected $fillable =
         [
-    'name',
-    'subject',
-    'guard_name'
-];
+            'name',
+            'subject',
+            'guard_name'
+        ];
 
     protected $appends = ['name_y_subjet'];
 
@@ -52,14 +53,13 @@ class Permission extends Model
      */
     protected $casts =
         [
-        'id' => 'integer',
-        'name' => 'string',
-        'subject' => 'string',
-        'guard_name' => 'string',
-        'created_at' => 'timestamp',
-        'updated_at' => 'timestamp',
-    ];
-
+            'id' => 'integer',
+            'name' => 'string',
+            'subject' => 'string',
+            'guard_name' => 'string',
+            'created_at' => 'timestamp',
+            'updated_at' => 'timestamp',
+        ];
 
 
     /**
@@ -68,11 +68,11 @@ class Permission extends Model
      * @var array
      */
     public static $rules =
-    [
-    'name' => 'required|string|max:255|unique:permissions,name',
-    'subject' => 'required|string|max:255',
-    'guard_name' => 'required|string|max:255',
-];
+        [
+            'name' => 'required|string|max:255|unique:permissions,name',
+            'subject' => 'required|string|max:255',
+            'guard_name' => 'required|string|max:255',
+        ];
 
 
     /**
@@ -80,7 +80,7 @@ class Permission extends Model
      *
      * @var array
      */
-    public static $messages =[
+    public static $messages = [
 
     ];
 
